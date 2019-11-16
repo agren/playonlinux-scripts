@@ -1,0 +1,67 @@
+#!/bin/bash
+# Date : (2019-11-14 21:34)
+# Last revision : (2019-11-16 19:32)
+# Wine version used : 3.0.3
+# Distribution used to test : Ubuntu 18.04.3 amd64
+# Author : agren
+# PlayOnLinux : 4.3.4
+# Script licence : GPL3
+# Program licence : Retail
+
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+
+TITLE="GOG.com - Monkey Island 2 : LeChuck's Revenge Special Edition"
+PREFIX="MI2_SE_gog"
+EDITOR="Lucasarts"
+GAME_URL="http://www.lucasarts.com/games/monkeyisland/"
+AUTHOR="agren"
+WORKING_WINE_VERSION="3.0.3"
+GAME_VMS="256"
+
+# Tested using setup_monkey_island2_se_2.0.0.10.exe
+
+POL_System_TmpCreate "$PREFIX"
+
+POL_GetSetupImages "http://files.playonlinux.com/resources/setups/mi2_se/top.jpg" "http://files.playonlinux.com/resources/setups/mi2_se/left.jpg" "$TITLE"
+POL_SetupWindow_Init
+
+POL_Debug_Init
+
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
+POL_SetupWindow_message "Notes:
+\\n
+\\n* The error message 'Runtime Error (at x:x):' might show up after the 'Microsoft Visual C++ 2008 Redistributable Setup' has finished. This is fine. Just click OK to continue.
+\\n
+\\n* Do not change the game installation directory during setup. Otherwise the game will fail to run" "$TITLE"
+
+POL_Wine_SelectPrefix "$PREFIX"
+
+POL_System_SetArch "x86"
+POL_Wine_PrefixCreate "$WORKING_WINE_VERSION"
+
+POL_Call POL_Install_xact
+POL_Call POL_Install_d3dx9_42
+
+POL_Wine_OverrideDLL "native" "XAudio2_6" # Fix missing sound
+
+cd "$HOME" || exit 1
+POL_SetupWindow_browse "$(eval_gettext 'Please select the setup file to run')" "$TITLE"
+SETUP_EXE="$APP_ANSWER"
+POL_GoG_location="$SETUP_EXE"
+POL_Call POL_GoG_install "/nogui" # nogui to avoid some error dialogs
+
+# Extract D3DCompiler_42.dll
+DX_EXE="tmp/directx_Jun2010_redist.exe"
+D3DC_CAB="Aug2009_D3DCompiler_42_x86.cab"
+innoextract --include "$DX_EXE" -d "$POL_System_TmpDir" "$SETUP_EXE" \
+&& cabextract -F "$D3DC_CAB" -d "$POL_System_TmpDir" "$POL_System_TmpDir/$DX_EXE" \
+&& cabextract -F "D3DCompiler_42.dll" -d "$GOGROOT/Monkey Island 2 SE" "$POL_System_TmpDir/$D3DC_CAB" \
+|| POL_Debug_Fatal "Could not extract D3DCompiler_42.dll"
+
+POL_System_TmpDelete
+
+POL_Shortcut "GOG Games/Monkey Island 2 SE/Monkey2.exe" "$TITLE" "MI2_SE.png" "" "Game;AdventureGame"
+
+POL_SetupWindow_Close
+exit 0
