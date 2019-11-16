@@ -56,7 +56,7 @@ innoextract --include "$DX_EXE" -d "$POL_System_TmpDir" "$POL_GoG_location" \
 
 POL_System_TmpDelete
 
-POL_Shortcut "GOG Games/Monkey Island 2 SE/Monkey2.exe" "$TITLE" "MI2_SE.png" "" "Game;AdventureGame"
+POL_Shortcut "GOG Games/Monkey Island 2 SE/Monkey2.exe" "$TITLE" "Monkey Island 2 : LeChuck's Revenge Special Edition.png" "" "Game;AdventureGame"
 
 POL_SetupWindow_Close
 exit 0
