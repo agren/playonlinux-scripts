@@ -1,6 +1,6 @@
 #!/bin/bash
 # Date : (2019-11-14 21:34)
-# Last revision : (2019-11-16 19:32)
+# Last revision : (2019-11-16 22:59)
 # Wine version used : 3.0.3
 # Distribution used to test : Ubuntu 18.04.3 amd64
 # Author : agren
@@ -11,6 +11,7 @@
 [ "$PLAYONLINUX" = "" ] && exit 0
 source "$PLAYONLINUX/lib/sources"
 
+GOGID="monkey_island_2_special_edition_lechucks_revenge"
 TITLE="GOG.com - Monkey Island 2 : LeChuck's Revenge Special Edition"
 PREFIX="MI2_SE_gog"
 EDITOR="Lucasarts"
@@ -45,16 +46,13 @@ POL_Call POL_Install_d3dx9_42
 
 POL_Wine_OverrideDLL "native" "XAudio2_6" # Fix missing sound
 
-cd "$HOME" || POL_Debug_Fatal "Could not cd into '$HOME'"
-POL_SetupWindow_browse "$(eval_gettext 'Please select the setup file to run')" "$TITLE"
-SETUP_EXE="$APP_ANSWER"
-POL_GoG_location="$SETUP_EXE"
+POL_Call POL_GoG_setup "$GOGID" "20a0bc39dcf543856f0d463649c482c4"
 POL_Call POL_GoG_install "/nogui" # nogui to avoid some error dialogs
 
 # Extract D3DCompiler_42.dll
 DX_EXE="tmp/directx_Jun2010_redist.exe"
 D3DC_CAB="Aug2009_D3DCompiler_42_x86.cab"
-innoextract --include "$DX_EXE" -d "$POL_System_TmpDir" "$SETUP_EXE" \
+innoextract --include "$DX_EXE" -d "$POL_System_TmpDir" "$POL_GoG_location" \
 && cabextract -F "$D3DC_CAB" -d "$POL_System_TmpDir" "$POL_System_TmpDir/$DX_EXE" \
 && cabextract -F "D3DCompiler_42.dll" -d "$GOGROOT/Monkey Island 2 SE" "$POL_System_TmpDir/$D3DC_CAB" \
 || POL_Debug_Fatal "Could not extract D3DCompiler_42.dll"
