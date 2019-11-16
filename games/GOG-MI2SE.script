@@ -1,6 +1,6 @@
 #!/bin/bash
 # Date : (2019-11-14 21:34)
-# Last revision : (2019-11-16 22:59)
+# Last revision : (2019-11-16 23:12)
 # Wine version used : 3.0.3
 # Distribution used to test : Ubuntu 18.04.3 amd64
 # Author : agren
@@ -30,11 +30,7 @@ POL_SetupWindow_Init
 POL_Debug_Init
 
 POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$GAME_URL" "$AUTHOR" "$PREFIX"
-POL_SetupWindow_message "Notes:
-\\n
-\\n* The error message 'Runtime Error (at x:x):' might show up after the 'Microsoft Visual C++ 2008 Redistributable Setup' has finished. This is fine. Just click OK to continue.
-\\n
-\\n* Do not change the game installation directory during setup. Otherwise the game will fail to run." "$TITLE"
+POL_SetupWindow_message "The error message 'Runtime Error (at x:x):' might show up after 'Microsoft Visual C++ 2008 Redistributable Setup' has finished. This is fine. Just click OK to continue." "$TITLE"
 
 POL_Wine_SelectPrefix "$PREFIX"
 
@@ -47,7 +43,8 @@ POL_Call POL_Install_d3dx9_42
 POL_Wine_OverrideDLL "native" "XAudio2_6" # Fix missing sound
 
 POL_Call POL_GoG_setup "$GOGID" "20a0bc39dcf543856f0d463649c482c4"
-POL_Call POL_GoG_install "/nogui" # nogui to avoid some error dialogs
+POL_Call POL_GoG_install "/nogui" "/SILENT" # nogui to avoid some error dialogs.
+                                            # SILENT to prevent the user from changing installation directory.
 
 # Extract D3DCompiler_42.dll
 DX_EXE="tmp/directx_Jun2010_redist.exe"
