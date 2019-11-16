@@ -33,7 +33,7 @@ POL_SetupWindow_message "Notes:
 \\n
 \\n* The error message 'Runtime Error (at x:x):' might show up after the 'Microsoft Visual C++ 2008 Redistributable Setup' has finished. This is fine. Just click OK to continue.
 \\n
-\\n* Do not change the game installation directory during setup. Otherwise the game will fail to run" "$TITLE"
+\\n* Do not change the game installation directory during setup. Otherwise the game will fail to run." "$TITLE"
 
 POL_Wine_SelectPrefix "$PREFIX"
 
@@ -45,7 +45,7 @@ POL_Call POL_Install_d3dx9_42
 
 POL_Wine_OverrideDLL "native" "XAudio2_6" # Fix missing sound
 
-cd "$HOME" || exit 1
+cd "$HOME" || POL_Debug_Fatal "Could not cd into '$HOME'"
 POL_SetupWindow_browse "$(eval_gettext 'Please select the setup file to run')" "$TITLE"
 SETUP_EXE="$APP_ANSWER"
 POL_GoG_location="$SETUP_EXE"
