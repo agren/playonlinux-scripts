@@ -1,6 +1,6 @@
 #!/bin/bash
 # Date : (2019-11-14 21:34)
-# Last revision : (2019-11-16 23:12)
+# Last revision : (2019-11-16 00:49)
 # Wine version used : 3.0.3
 # Distribution used to test : Ubuntu 18.04.3 amd64
 # Author : agren
@@ -39,21 +39,13 @@ POL_Wine_PrefixCreate "$WORKING_WINE_VERSION"
 Set_OS "win7"
 
 POL_Call POL_Install_xact
-POL_Call POL_Install_d3dx9_42
+POL_Call POL_Install_dxfullsetup
 
 POL_Wine_OverrideDLL "native" "XAudio2_6" # Fix missing sound
 
 POL_Call POL_GoG_setup "$GOGID" "20a0bc39dcf543856f0d463649c482c4"
 POL_Call POL_GoG_install "/nogui" "/SILENT" # nogui to avoid some error dialogs.
                                             # SILENT to prevent the user from changing installation directory.
-
-# Extract D3DCompiler_42.dll
-DX_EXE="tmp/directx_Jun2010_redist.exe"
-D3DC_CAB="Aug2009_D3DCompiler_42_x86.cab"
-innoextract --include "$DX_EXE" -d "$POL_System_TmpDir" "$POL_GoG_location" \
-&& cabextract -F "$D3DC_CAB" -d "$POL_System_TmpDir" "$POL_System_TmpDir/$DX_EXE" \
-&& cabextract -F "D3DCompiler_42.dll" -d "$GOGROOT/Monkey Island 2 SE" "$POL_System_TmpDir/$D3DC_CAB" \
-|| POL_Debug_Fatal "Could not extract D3DCompiler_42.dll"
 
 POL_System_TmpDelete
 
